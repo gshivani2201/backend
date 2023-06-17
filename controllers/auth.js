@@ -9,7 +9,7 @@ exports.signup = (req, res, next) => {
   if (!errors.isEmpty()) {
     const error = new Error("Authentication failed!");
     error.statusCode = 422;
-    error.data = error.array();
+    error.data = errors.array();
     throw error;
   }
   const email = req.body.email;
