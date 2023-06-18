@@ -4,9 +4,12 @@ const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
+const { graphqlHTTP } = require("express-graphql");
 
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
+const graphqlSchema = require("./graphql/schema");
+const graphqlResolver = require("./graphql/resolvers");
 
 const app = express();
 
@@ -50,8 +53,16 @@ app.use((req, res, next) => {
 });
 
 // GET /feed/products
-app.use("/feed", feedRoutes);
-app.use("/auth", authRoutes);
+// app.use("/feed", feedRoutes);
+// app.use("/auth", authRoutes);
+
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver,
+  })
+);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -66,10 +77,10 @@ mongoose
     "mongodb+srv://node-shivani:iJX1XgSGr6nprkn4@cluster0.fc5jdgf.mongodb.net/messages"
   )
   .then((result) => {
-    const server = app.listen(8080);
-    const io = require("./socket").init(server);
-    io.on("connection", (socket) => {
-      console.log("Client connected");
-    });
+    app.listen(8080);
+    // const io = require("./socket").init(server);
+    // io.on("connection", (socket) => {
+    //   console.log("Client connected");
+    // });
   })
   .catch((err) => console.log(err));
