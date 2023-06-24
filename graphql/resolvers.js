@@ -65,7 +65,7 @@ module.exports = {
     if (!req.isAuth) {
       const error = new Error("not authenticated to perform this action");
       error.code = 401;
-      throw Error;
+      throw error;
     }
     const errors = [];
     if (
@@ -90,7 +90,7 @@ module.exports = {
     if (!user) {
       const error = new Error("User not found");
       error.code = 401;
-      throw Error;
+      throw error;
     }
     const post = new Post({
       title: postInput.title,
@@ -100,7 +100,7 @@ module.exports = {
     });
     const createdPost = await post.save();
     user.posts.push(createdPost);
-    // add post to user's posts
+    await user.save();
     return {
       ...createdPost._doc,
       _id: createdPost._id.toString(),
