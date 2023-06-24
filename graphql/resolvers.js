@@ -108,4 +108,11 @@ module.exports = {
       updatedAt: createdPost.updatedAt.toISOString(),
     };
   },
+  posts: async function (args, req) {
+    if (!req.isAuth) {
+      const error = new Error("not authenticated to perform this action");
+      error.code = 401;
+      throw error;
+    }
+  },
 };
